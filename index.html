@@ -38,6 +38,7 @@ footer button{flex:1;border:0;border-radius:8px;padding:13px;color:#fff;font-wei
 <div style="grid-column:1/-1"><label>船名 Vessel Name *</label><select id="vessel"><option value="">請選擇船名 Select Vessel...</option></select></div>
 <div><label>港口 Port *</label><input id="port"></div><div><label>日期 Date *</label><input id="date" type="date"></div>
 <div><label>訪船人員 Inspector *</label><input id="inspector"></div>
+<div><label>航次 Voyage</label><input id="voyage"></div>
 </div></div></details>
 <div class="progress"><b>填寫進度 <span id="progText">0 / 0</span></b><div class="barbg"><div class="bar" id="bar"></div></div></div>
 <div id="checks"></div>
@@ -111,7 +112,7 @@ function drawPhotos(row,key){
 }
 
 function rowsCSV(){
- let rows=[["單位","SPD"],["表單",formType.options[formType.selectedIndex].text],["船名",vessel.options[vessel.selectedIndex]?.text||""],["港口",port.value],["日期",date.value],["訪船人員",inspector.value],[],["區域","檢查項目","結果","備註","照片數"]];
+ let rows=[["單位","SPD"],["表單",formType.options[formType.selectedIndex].text],["船名",vessel.options[vessel.selectedIndex]?.text||""],["港口",port.value],["日期",date.value],["訪船人員",inspector.value],["航次",voyage.value],[],["區域","檢查項目","結果","備註","照片數"]];
  document.querySelectorAll('.item').forEach(row=>{
    const [area,q]=row.dataset.key.split('|');
    rows.push([area,q,answers[row.dataset.key]||"",row.querySelector('.remark').value,(photoStore[row.dataset.key]||[]).length]);
@@ -127,7 +128,7 @@ function exportCSV(){
 function sendMail(){
  if(!vessel.value)return alert('請先選擇船名');
  let sub=encodeURIComponent(`訪船檢查報告 - ${vessel.value} - ${port.value} - ${date.value}`),
- body=encodeURIComponent(`船名：${vessel.options[vessel.selectedIndex].text}\n表單：${formType.options[formType.selectedIndex].text}\n港口：${port.value}\n日期：${date.value}\n訪船人員：${inspector.value}\n\n詳細內容請參閱訪船報告。`);
+ body=encodeURIComponent(`船名：${vessel.options[vessel.selectedIndex].text}\n表單：${formType.options[formType.selectedIndex].text}\n港口：${port.value}\n日期：${date.value}\n訪船人員：${inspector.value}\n航次：${voyage.value}\n\n詳細內容請參閱訪船報告。`);
  location.href=`mailto:?subject=${sub}&body=${body}`;
 }
 function printReport(){
@@ -145,9 +146,9 @@ function printReport(){
  let w=window.open('','_blank');
  if(!w){alert('瀏覽器阻擋了報告視窗，請允許此網站開啟彈出式視窗後再按 Report。');return}
  w.document.write(`<!doctype html><html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(vessel.value)} 訪船檢查報告</title><style>
- @page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Microsoft JhengHei","Segoe UI",sans-serif;color:#222;margin:0;font-size:12px}h1{text-align:center;font-size:22px;margin:0 0 4px}.sub{text-align:center;color:#555;margin-bottom:14px}.info{display:grid;grid-template-columns:1fr 1fr;border:1px solid #aaa;margin-bottom:14px}.info div{padding:7px 9px;border-bottom:1px solid #ddd}.info div:nth-child(odd){border-right:1px solid #ddd}h2{font-size:15px;background:#eef2f7;padding:7px 9px;margin:12px 0 0;border:1px solid #bbb}.r{border:1px solid #ccc;border-top:0;padding:8px;break-inside:avoid}.rq{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.rq span{font-size:18px;font-weight:900;min-width:24px;text-align:center}.yes{color:#16855b}.no{color:#c9362b}.remark2{margin-top:5px;white-space:pre-wrap}.photos{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}.photos img{width:31%;max-height:180px;object-fit:contain;border:1px solid #ddd}.textblock{border:1px solid #bbb;padding:9px;min-height:45px;white-space:pre-wrap;margin-bottom:10px}.actions{position:sticky;bottom:0;background:white;padding:10px 0;text-align:center}.actions button{border:0;background:#4e73df;color:white;padding:11px 20px;border-radius:7px;font-weight:700}@media print{.actions{display:none}} </style></head><body>
+ @page{size:A4;margin:12mm}*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Microsoft JhengHei","Segoe UI",sans-serif;color:#222;margin:0;font-size:12px}h1{text-align:center;font-size:22px;margin:0 0 4px}.sub{text-align:center;color:#555;margin-bottom:14px}.info{display:grid;grid-template-columns:1fr 1fr;border:1px solid #aaa;margin-bottom:14px}.info div{padding:7px 9px;border-bottom:1px solid #ddd}.info div:nth-child(odd){border-right:1px solid #ddd}h2{font-size:15px;background:#eef2f7;padding:7px 9px;margin:12px 0 0;border:1px solid #bbb}.r{border:1px solid #ccc;border-top:0;padding:8px;break-inside:avoid;page-break-inside:avoid}.rq{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.rq span{font-size:18px;font-weight:900;min-width:24px;text-align:center}.yes{color:#16855b}.no{color:#c9362b}.remark2{margin-top:5px;white-space:pre-wrap}.photos{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;break-inside:avoid;page-break-inside:avoid}.photos img{width:31%;max-height:180px;object-fit:contain;border:1px solid #ddd;break-inside:avoid;page-break-inside:avoid}.textblock{border:1px solid #bbb;padding:9px;min-height:45px;white-space:pre-wrap;margin-bottom:10px}.actions{position:sticky;bottom:0;background:white;padding:10px 0;text-align:center}.actions button{border:0;background:#4e73df;color:white;padding:11px 20px;border-radius:7px;font-weight:700}@media print{.actions{display:none}} </style></head><body>
  <h1>訪船檢查報告</h1><div class="sub">STORE SUPPLY · SPD</div>
- <div class="info"><div><b>船名：</b>${esc(vessel.options[vessel.selectedIndex].text)}</div><div><b>表單：</b>${esc(formType.options[formType.selectedIndex].text)}</div><div><b>港口：</b>${esc(port.value)}</div><div><b>日期：</b>${esc(date.value)}</div><div><b>訪船人員：</b>${esc(inspector.value)}</div><div><b>單位：</b>SPD</div></div>
+ <div class="info"><div><b>船名：</b>${esc(vessel.options[vessel.selectedIndex].text)}</div><div><b>表單：</b>${esc(formType.options[formType.selectedIndex].text)}</div><div><b>港口：</b>${esc(port.value)}</div><div><b>日期：</b>${esc(date.value)}</div><div><b>訪船人員：</b>${esc(inspector.value)}</div><div><b>單位：</b>SPD</div><div><b>航次：</b>${esc(voyage.value)}</div><div></div></div>
  ${sections}
  <h2>船員建議或反映事項</h2><div class="textblock">${esc(crew.value)}</div>
  <h2>訪船人員註記及提醒事項</h2><div class="textblock">${esc(note.value)}</div>
